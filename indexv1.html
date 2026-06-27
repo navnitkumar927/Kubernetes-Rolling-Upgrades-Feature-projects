@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyApp — v1.0.0 (Stable)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --border:    #2a2d3a;
+      --accent:    #00d4aa;
+      --accent2:   #0066ff;
+      --text:      #e8eaf0;
+      --muted:     #7a7f94;
+      --success:   #00d4aa;
+      --badge-bg:  #0d2e28;
+      --mono:      'Courier New', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-brand { font-weight: 700; font-size: 1.1rem; letter-spacing: .04em; }
+    .nav-brand span { color: var(--accent); }
+    .version-badge {
+      background: var(--badge-bg);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: .25rem .75rem;
+      border-radius: 20px;
+      font-family: var(--mono);
+      font-size: .78rem;
+      font-weight: 600;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,212,170,.12), transparent 70%);
+      pointer-events: none;
+    }
+    .deploy-ring {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+    .deploy-ring::before {
+      content: '';
+      position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--accent);
+      animation: spin 3s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .deploy-icon { font-size: 3rem; }
+
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; margin-bottom: .75rem; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { color: var(--muted); font-size: 1.1rem; max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.7; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--badge-bg);
+      border: 1px solid var(--success);
+      padding: .5rem 1.25rem;
+      border-radius: 24px;
+      font-size: .9rem;
+      color: var(--success);
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── METRICS ── */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: border-color .2s;
+    }
+    .metric-card:hover { border-color: var(--accent); }
+    .metric-value { font-size: 2rem; font-weight: 800; color: var(--accent); font-family: var(--mono); }
+    .metric-label { font-size: .8rem; color: var(--muted); margin-top: .3rem; text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ── ROLLBACK SECTION ── */
+    .rollback-section {
+      max-width: 860px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+    .section-title {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    .timeline-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+    .timeline-item.active { border-color: var(--accent); background: rgba(0,212,170,.04); }
+    .tl-icon { font-size: 1.2rem; margin-top: .1rem; flex-shrink: 0; }
+    .tl-body { flex: 1; }
+    .tl-title { font-weight: 600; font-size: .95rem; margin-bottom: .2rem; }
+    .tl-meta { font-size: .8rem; color: var(--muted); font-family: var(--mono); }
+    .tl-tag {
+      display: inline-block;
+      font-size: .7rem;
+      padding: .15rem .6rem;
+      border-radius: 12px;
+      font-weight: 700;
+      margin-left: .5rem;
+    }
+    .tag-current { background: rgba(0,212,170,.15); color: var(--accent); }
+    .tag-prev    { background: rgba(120,130,160,.12); color: var(--muted); }
+
+    /* ── KUBECTL BLOCK ── */
+    .kubectl-block {
+      background: #080b12;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      font-family: var(--mono);
+      font-size: .85rem;
+      line-height: 1.9;
+      overflow-x: auto;
+    }
+    .kubectl-block .prompt { color: var(--accent2); }
+    .kubectl-block .cmd    { color: #e8eaf0; }
+    .kubectl-block .comment{ color: #505570; }
+    .kubectl-block .out    { color: #7a7f94; }
+    .kubectl-block .ok     { color: var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: .8rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-brand">My<span>App</span></div>
+    <div class="version-badge">v1.0.0 · STABLE</div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="deploy-ring">
+      <div class="deploy-icon">🚀</div>
+    </div>
+    <h1>Deployment <em>Version 1</em></h1>
+    <p>The initial stable release. All core features working as expected. This is the <strong>rollback target</strong> — the trusted baseline you return to when things go wrong.</p>
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      Running · All pods healthy
+    </div>
+  </section>
+
+  <!-- METRICS -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-value">3/3</div>
+      <div class="metric-label">Pods Running</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">99.9%</div>
+      <div class="metric-label">Uptime</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">42ms</div>
+      <div class="metric-label">Avg Latency</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">0</div>
+      <div class="metric-label">Error Rate</div>
+    </div>
+  </div>
+
+  <!-- ROLLBACK SECTION -->
+  <div class="rollback-section">
+    <div class="section-title">Deployment History</div>
+
+    <div class="timeline">
+      <div class="timeline-item active">
+        <div class="tl-icon">✅</div>
+        <div class="tl-body">
+          <div class="tl-title">v1.0.0 — Initial Release <span class="tl-tag tag-current">CURRENT</span></div>
+          <div class="tl-meta">Revision 1 · Deployed: 2025-06-01 · image: myapp:1.0.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KUBECTL COMMANDS -->
+    <div class="section-title" style="margin-top:2.5rem">Kubernetes Rollback Commands</div>
+    <div class="kubectl-block">
+      <div><span class="comment"># Check rollout history</span></div>
+      <div><span class="prompt">$</span> <span class="cmd">kubectl rollout history deployment/myapp</span></div>
+      <div><span class="out">REVISION  CHANGE-CAUSE</span></div>
+      <div><span class="ok">1         Initial release v1.0.0</span></div>
+      <br>
+      <div><span class="comment"># Describe revision 1</span></div>
+      <div><span class="prompt">$</span> <span class="cmd">kubectl rollout history deployment/myapp --revision=1</span></div>
+      <div><span class="out">Image: myapp:1.0.0</span></div>
+      <br>
+      <div><span class="comment"># To rollback TO v1 from a later version:</span></div>
+      <div><span class="prompt">$</span> <span class="cmd">kubectl rollout undo deployment/myapp --to-revision=1</span></div>
+      <div><span class="ok">deployment.apps/myapp rolled back</span></div>
+      <br>
+      <div><span class="comment"># Verify rollback success</span></div>
+      <div><span class="prompt">$</span> <span class="cmd">kubectl rollout status deployment/myapp</span></div>
+      <div><span class="ok">deployment "myapp" successfully rolled out</span></div>
+    </div>
+  </div>
+
+  <footer>
+    MyApp · Kubernetes Deployment Demo · Version 1.0.0 (Stable Baseline)
+  </footer>
+
+</body>
+</html>
